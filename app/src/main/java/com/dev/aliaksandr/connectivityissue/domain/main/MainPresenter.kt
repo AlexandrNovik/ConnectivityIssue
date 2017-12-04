@@ -1,9 +1,13 @@
 package com.dev.aliaksandr.connectivityissue.domain.main
 
+import android.util.Log
 import com.dev.aliaksandr.connectivityissue.ConnectivityIssueApp
+import com.dev.aliaksandr.connectivityissue.domain.connectivity.ConnectivityObservableTransformer
+import com.dev.aliaksandr.connectivityissue.domain.connectivity.NetworkStateObservable
 import rx.Observable
 import rx.Scheduler
-import rx.Subscription
+import rx.subscriptions.CompositeSubscription
+import java.io.IOException
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Named
@@ -18,16 +22,35 @@ class MainPresenter(private var view: MainContract.View?) : MainContract.Present
 
     @field:[Named("main_thread")]
     @Inject lateinit var postExecutionThread: Scheduler
+    @Inject lateinit var connectivityObservableTransformer: ConnectivityObservableTransformer
+    @Inject lateinit var networkStateObservable: NetworkStateObservable
 
-    private var subscription: Subscription? = null
+    private var subscription: CompositeSubscription? = null
 
     override fun start() {
-        subscription = Observable
+        val dataSubscription = Observable
                 .interval(1, TimeUnit.SECONDS)
+                .doOnNext { if (networkStateObservable.isConnected().not()) throw IOException() } // emulate exception
+                .compose { connectivityObservableTransformer.call(it) }
+                .onBackpressureDrop()
                 .observeOn(postExecutionThread)
                 .subscribe({
                     view?.updateCounterText(it.toString())
+                }, {
+                    Log.e("MainPresenter", "Error getting data : ${it.message}")
                 })
+
+        val networkSubscription = networkStateObservable
+                .observeConnectivityState()
+                .observeOn(postExecutionThread)
+                .subscribe({
+                    view?.updateConnectionText(it.toString())
+                }, {
+                    Log.e("MainPresenter", "Error observing network: ${it.message}")
+                })
+
+        subscription?.add(dataSubscription)
+        subscription?.add(networkSubscription)
     }
 
     override fun release() {

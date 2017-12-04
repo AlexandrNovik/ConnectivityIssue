@@ -14,8 +14,7 @@ class MainActivityComponent(private val presenter: MainContract.Presenter?) : An
     private lateinit var counterTextView: TextView
     private lateinit var connectionTextView: TextView
 
-    private var connectionState: String = "UNDEFINED"
-    private var connectionText: String = "Internet connection is: $connectionState"
+    private var connectionText: String = "Internet connection is: UNDEFINED"
 
     override fun createView(ui: AnkoContext<MainActivity>): View = with(ui) {
         frameLayout {
@@ -45,16 +44,11 @@ class MainActivityComponent(private val presenter: MainContract.Presenter?) : An
     }
 
     fun updateConnectionText(value: String) {
-        connectionState = value
-        connectionTextView.apply { text = connectionState }
+        connectionTextView.apply { text = value }
     }
 
     private fun View.hide() {
         this.visibility = View.GONE
-    }
-
-    private fun View.show() {
-        this.visibility = View.VISIBLE
     }
 
 }
