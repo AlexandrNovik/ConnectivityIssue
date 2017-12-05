@@ -1,7 +1,7 @@
 package com.dev.aliaksandr.connectivityissue.di
 
 import com.dev.aliaksandr.connectivityissue.ConnectivityIssueApp
-import com.dev.aliaksandr.connectivityissue.domain.main.MainPresenter
+import com.dev.aliaksandr.connectivityissue.ui.MainActivity
 import dagger.Component
 import javax.inject.Singleton
 
@@ -12,5 +12,5 @@ import javax.inject.Singleton
 @Component(modules = [(AppModule::class)])
 interface AppComponent {
     fun inject(app: ConnectivityIssueApp)
-    fun inject(presenter: MainPresenter)
+    fun inject(activity: MainActivity)
 }
