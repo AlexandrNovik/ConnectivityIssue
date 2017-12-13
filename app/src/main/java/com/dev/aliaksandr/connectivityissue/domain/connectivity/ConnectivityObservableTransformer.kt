@@ -7,16 +7,17 @@ import javax.inject.Inject
 /**
  * @author Alexander Novik
  */
-class ConnectivityObservableTransformer @Inject constructor() {
-
+class ConnectivityObservableTransformer
+@Inject constructor(private var networkStateObservable: NetworkStateObservable) {
     fun <T : Any> call(observable: Observable<T>): Observable<T> {
-
         return observable
                 .retryWhen { errorObservable ->
                     errorObservable
                             .switchMap { error ->
                                 if (error.isNetworkError()) {
-                                    errorObservable
+                                    networkStateObservable
+                                            .observeConnectivityState()
+                                            .filter { it.isConnected }
                                 } else {
                                     Observable.error(error)
                                 }

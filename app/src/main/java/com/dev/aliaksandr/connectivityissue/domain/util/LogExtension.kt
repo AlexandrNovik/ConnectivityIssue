@@ -6,5 +6,5 @@ import android.util.Log
  * @author Alexander Novik
  */
 fun Any.logError(t: Throwable) {
-    Log.e(this.javaClass.name, t.message, t)
+    Log.e(this.javaClass.simpleName, t.message, t)
 }

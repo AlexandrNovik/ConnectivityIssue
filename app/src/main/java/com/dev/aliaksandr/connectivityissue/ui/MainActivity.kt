@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity(), MainContract.View {
     @Inject lateinit var networkStateObservable: NetworkStateObservable
 
     private lateinit var mainActivityComponent: MainActivityComponent
-    private var presenter: MainContract.Presenter? = null
+    private lateinit var presenter: MainContract.Presenter
 
     override fun updateCounterText(value: String) {
         mainActivityComponent.updateCounterText(value)
@@ -39,13 +39,13 @@ class MainActivity : AppCompatActivity(), MainContract.View {
                 networkStateObservable,
                 connectivityObservableTransformer,
                 postExecutionThread)
-        mainActivityComponent = MainActivityComponent(presenter)
+        mainActivityComponent = MainActivityComponent()
         mainActivityComponent.setContentView(this)
+        presenter.start()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        presenter?.release()
-        presenter = null
+        presenter.release()
     }
 }

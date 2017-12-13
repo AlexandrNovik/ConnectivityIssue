@@ -10,7 +10,7 @@ import org.jetbrains.anko.sdk25.coroutines.onClick
 /**
  * @author Alexander Novik
  */
-class MainActivityComponent(private val presenter: MainContract.Presenter?) : AnkoComponent<MainActivity> {
+class MainActivityComponent : AnkoComponent<MainActivity> {
     private lateinit var counterTextView: TextView
     private lateinit var connectionTextView: TextView
 
@@ -26,16 +26,6 @@ class MainActivityComponent(private val presenter: MainContract.Presenter?) : An
                 gravity = Gravity.CENTER
                 text = "Not started"
             }
-            button {
-                text = "Start"
-                onClick {
-                    presenter?.start()
-                    hide()
-                }
-            }.lparams(
-                    width = matchParent,
-                    height = wrapContent,
-                    gravity = Gravity.BOTTOM)
         }
     }
 
@@ -45,10 +35,6 @@ class MainActivityComponent(private val presenter: MainContract.Presenter?) : An
 
     fun updateConnectionText(value: String) {
         connectionTextView.apply { text = value }
-    }
-
-    private fun View.hide() {
-        this.visibility = View.GONE
     }
 
 }

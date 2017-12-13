@@ -10,13 +10,11 @@ import javax.inject.Singleton
  */
 @Singleton
 class NetworkStateObservable @Inject constructor() {
-    private val connectivitySubject = BehaviorSubject.create<ConnectivityState>(ConnectivityState(false))
+    private val connectivitySubject = BehaviorSubject.create<ConnectivityState>(ConnectivityState(true))
 
     fun onConnectivityStateChanged(state: ConnectivityState) {
         connectivitySubject.onNext(state)
     }
 
     fun observeConnectivityState(): Observable<ConnectivityState> = connectivitySubject.asObservable()
-
-    fun isConnected(): Boolean = connectivitySubject.value.isConnected
 }
